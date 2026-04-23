@@ -1,0 +1,26 @@
+{
+  "type": "commonjs",
+  "name": "auto-nomina",
+  "version": "1.0.0",
+  "description": "Automatización de descarga de comprobantes de nómina",
+  "main": "src/presentation/cli/index.js",
+  "scripts": {
+    "start": "node src/presentation/cli/index.js",
+    "test": "jest",
+    "login": "node src/presentation/cli/index.js login"
+  },
+  "keywords": [
+    "automation",
+    "payroll",
+    "police"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.59.1",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^10.0.0"
+  }
+}

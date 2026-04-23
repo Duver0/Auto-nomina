@@ -1,0 +1,51 @@
+name: Descargar Nómina
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'
+  push:
+    paths:
+      - 'docs/trigger.json'
+
+jobs:
+  descargar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npx playwright install chromium --with-deps
+
+      - name: Descargar nóminas
+        run: node src/presentation/cli/descargar.js
+        env:
+          USERNAME: ${{ secrets.NOMINA_USERNAME }}
+          PASSWORD: ${{ secrets.NOMINA_PASSWORD }}
+
+      - name: Subir a Release
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: output/*.pdf
+          tag_name: nomina-${{ github.run_number }}
+          name: Nómina ${{ github.run_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Subir como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nominas
+          path: output/*.pdf
+          retention-days: 7

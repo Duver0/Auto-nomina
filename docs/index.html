@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descargar Nómina - PSP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a5f2a 0%, #0d3d15 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 450px;
+      width: 90%;
+    }
+
+    .icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .icon svg {
+      width: 40px;
+      height: 40px;
+      fill: white;
+    }
+
+    h1 {
+      color: #1a5f2a;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+      color: white;
+      border: none;
+      padding: 18px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      text-decoration: none;
+      min-width: 200px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #E8F5E9;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #2E7D32;
+    }
+
+    .info strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      color: #999;
+      font-size: 12px;
+    }
+
+    .releases-link {
+      color: #2E7D32;
+      font-weight: 600;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+      </svg>
+    </div>
+
+    <h1>Descarga de Nómina</h1>
+    <p class="subtitle">Certificados de pensión</p>
+
+    <a href="https://github.com/duver-betancur/Auto-nomina/actions/workflows/descargar-nomina.yml" target="_blank" class="btn">
+      Descargar Nómina
+    </a>
+
+    <div class="info">
+      <strong>Cómo descargar:</strong>
+      1. Haz clic en el botón<br>
+      2. Selecciona "Run workflow"<br>
+      3. Espera 1-2 minutos<br>
+      4. Descarga desde Releases
+    </div>
+
+    <p class="footer">Portal Telemática PSP - Policía Nacional</p>
+  </div>
+</body>
+</html>
