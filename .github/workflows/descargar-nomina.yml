@@ -3,10 +3,7 @@ name: Descargar Nómina
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 8 * * *'
-  push:
-    paths:
-      - 'docs/trigger.json'
+    - cron: '0 9 * * 1'
 
 jobs:
   descargar:
@@ -33,19 +30,16 @@ jobs:
           USERNAME: ${{ secrets.NOMINA_USERNAME }}
           PASSWORD: ${{ secrets.NOMINA_PASSWORD }}
 
-      - name: Subir a Release
-        if: github.event_name == 'workflow_dispatch'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: output/*.pdf
-          tag_name: nomina-${{ github.run_number }}
-          name: Nómina ${{ github.run_number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Copiar a downloads
+        run: |
+          mkdir -p downloads
+          cp output/*.pdf downloads/
+          ls -la downloads/
 
-      - name: Subir como artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nominas
-          path: output/*.pdf
-          retention-days: 7
+      - name: Commit files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add downloads/
+          git diff --staged --quiet || git commit -m "weekly: actualizar nóminas $(date +'%Y-%m-%d')"
+          git push

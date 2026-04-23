@@ -18,6 +18,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
 
     .container {
@@ -26,8 +27,8 @@
       padding: 40px;
       text-align: center;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-width: 450px;
-      width: 90%;
+      max-width: 500px;
+      width: 100%;
     }
 
     .icon {
@@ -59,55 +60,53 @@
       margin-bottom: 30px;
     }
 
-    .btn {
-      display: inline-block;
+    .files {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .file-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
       color: white;
-      border: none;
-      padding: 18px 40px;
-      font-size: 18px;
-      font-weight: 600;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      padding: 15px 30px;
+      border-radius: 15px;
       text-decoration: none;
-      min-width: 200px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
     }
 
-    .btn:hover {
+    .file-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
     }
 
-    .btn:active {
-      transform: translateY(0);
+    .file-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
     }
 
     .info {
-      margin-top: 20px;
-      padding: 15px;
       background: #E8F5E9;
+      padding: 15px;
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 13px;
       color: #2E7D32;
-    }
-
-    .info strong {
-      display: block;
-      margin-bottom: 5px;
+      line-height: 1.6;
     }
 
     .footer {
-      margin-top: 30px;
+      margin-top: 25px;
       color: #999;
       font-size: 12px;
-    }
-
-    .releases-link {
-      color: #2E7D32;
-      font-weight: 600;
-      text-decoration: none;
     }
   </style>
 </head>
@@ -120,18 +119,23 @@
     </div>
 
     <h1>Descarga de Nómina</h1>
-    <p class="subtitle">Certificados de pensión</p>
+    <p class="subtitle">Certificados de pensión - Abril 2026</p>
 
-    <a href="https://github.com/duver-betancur/Auto-nomina/actions/workflows/descargar-nomina.yml" target="_blank" class="btn">
-      Descargar Nómina
-    </a>
+    <div class="files">
+      <a href="downloads/nomina1-abril-2026.pdf" class="file-btn" download>
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Descargar Nómina 1
+      </a>
+
+      <a href="downloads/nomina2-abril-2026.pdf" class="file-btn" download>
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Descargar Nómina 2
+      </a>
+    </div>
 
     <div class="info">
-      <strong>Cómo descargar:</strong>
-      1. Haz clic en el botón<br>
-      2. Selecciona "Run workflow"<br>
-      3. Espera 1-2 minutos<br>
-      4. Descarga desde Releases
+      Los archivos se actualizan automáticamente cada lunes.<br>
+      Si no aparecen, espera unos minutos.
     </div>
 
     <p class="footer">Portal Telemática PSP - Policía Nacional</p>
