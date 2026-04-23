@@ -1,0 +1,19 @@
+{
+  "name": "Descarga de Nómina - PSP",
+  "short_name": "Nómina PSP",
+  "description": "Automatización de descarga de comprobantes de nómina",
+  "start_url": "/Auto-nomina/",
+  "display": "standalone",
+  "background_color": "#1a5f2a",
+  "theme_color": "#1a5f2a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234CAF50'><path d='M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"]
+}

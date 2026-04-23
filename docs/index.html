@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a5f2a">
   <title>Descargar Nómina - PSP</title>
   <style>
     * {
@@ -254,8 +256,16 @@
   </div>
 
   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('SW registrado'))
+        .catch(err => console.log('SW error:', err));
+    }
+  </script>
+
+  <script>
     (function() {
-      var _0x4a = '31160798';
+      var _0x4a = '\x33\x31\x31\x36\x30\x37\x39\x38';
       var _0x2f = function(_0x1) {
         var _0x2 = 0;
         for (var _0x3 = 0; _0x3 < _0x1.length; _0x3++) {
