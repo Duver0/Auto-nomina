@@ -4,6 +4,7 @@ const path = require('path');
 
 const config = require('../../shared/config');
 const OUTPUT_PATH = './output';
+const MAX_RETRIES = 2;
 
 const CREDENTIALS = {
   username: process.env.NOMINA_USERNAME,
@@ -21,6 +22,27 @@ function extraerPeriodo(nombre) {
     return `${match[1]}-${match[2]}`;
   }
   return 'desconocido';
+}
+
+async function withRetry(fn, label) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const result = await fn();
+      if (result === null && attempt < MAX_RETRIES) {
+        console.log(`   🔁 Reintentando (${attempt}/${MAX_RETRIES - 1})...`);
+        continue;
+      }
+      return result;
+    } catch (err) {
+      lastError = err;
+      if (attempt < MAX_RETRIES) {
+        console.log(`   🔁 Reintentando por error: ${err.message.substring(0, 80)} (${attempt}/${MAX_RETRIES - 1})...`);
+      }
+    }
+  }
+  console.log(`   ❌ Falló después de ${MAX_RETRIES} intentos: ${lastError.message.substring(0, 80)}`);
+  return null;
 }
 
 // textFilter: regex to match desired dropdown item, or null to pick most recent (nth 1)
@@ -158,29 +180,47 @@ async function main() {
     console.log(`   🌐 [PAGE ERROR] ${err.message}`);
   });
 
-  console.log(`🔄 Navegando a ${config.baseUrl}${config.loginUrl}...`);
-  await page.goto(config.baseUrl + config.loginUrl, { waitUntil: 'domcontentloaded' });
+  async function loginWithRetry() {
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        console.log(`🔄 Navegando a ${config.baseUrl}${config.loginUrl}...`);
+        await page.goto(config.baseUrl + config.loginUrl, { waitUntil: 'domcontentloaded' });
+        console.log(`🔐 Iniciando sesión con usuario: ${CREDENTIALS.username}...`);
+        await page.fill('#txtUsuario', CREDENTIALS.username);
+        await page.fill('#txtClave', CREDENTIALS.password);
+        await page.click('#btnIngresar');
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(3000);
+        console.log('🔐 Sesión iniciada correctamente');
+        return;
+      } catch (err) {
+        if (attempt < MAX_RETRIES) {
+          console.log(`   🔁 Reintentando login (${attempt}/${MAX_RETRIES - 1})...`);
+        } else {
+          throw new Error(`Login falló después de ${MAX_RETRIES} intentos: ${err.message}`);
+        }
+      }
+    }
+  }
 
-  console.log(`🔐 Iniciando sesión con usuario: ${CREDENTIALS.username}...`);
-  await page.fill('#txtUsuario', CREDENTIALS.username);
-  await page.fill('#txtClave', CREDENTIALS.password);
-  await page.click('#btnIngresar');
-  await page.waitForLoadState('domcontentloaded');
-  await page.waitForTimeout(3000);
-  console.log('🔐 Sesión iniciada correctamente');
+  await loginWithRetry();
+
+  async function descargarWrapper(option, filePrefix, textFilter) {
+    return withRetry(() => downloadNomina(page, option, filePrefix, textFilter, OUTPUT_PATH), filePrefix);
+  }
 
   // Colillas ordinarias
-  await downloadNomina(page, '1', 'nomina1', null, OUTPUT_PATH);
-  await downloadNomina(page, '2', 'nomina2', null, OUTPUT_PATH);
+  await descargarWrapper('1', 'nomina1', null);
+  await descargarWrapper('2', 'nomina2', null);
 
   // Prima de servicio (ambas pensiones)
   const filtroPrima = /PRIMA DE SERVICIO DE PENSIONADOS-TEGEN/i;
-  await downloadNomina(page, '1', 'prima1', filtroPrima, OUTPUT_PATH);
-  await downloadNomina(page, '2', 'prima2', filtroPrima, OUTPUT_PATH);
+  await descargarWrapper('1', 'prima1', filtroPrima);
+  await descargarWrapper('2', 'prima2', filtroPrima);
 
   // Retroactivo (solo pensión 2 — no existe en v_p=1)
   const filtroRetroactivo = /NOMINA\s+DE\s+RETROACTIVO\s+DE\s+PENSIONADOS-TEGEN/i;
-  await downloadNomina(page, '2', 'retroactivo', filtroRetroactivo, OUTPUT_PATH);
+  await descargarWrapper('2', 'retroactivo', filtroRetroactivo);
 
   console.log('\n✅ Proceso completado!');
   await browser.close();
