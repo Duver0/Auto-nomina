@@ -13,7 +13,7 @@ npm run login                        # same as start with login subcommand
 
 Run download manually with credentials:
 ```bash
-USERNAME=xxx PASSWORD=yyy node src/presentation/cli/descargar.js
+NOMINA_USERNAME=xxx NOMINA_PASSWORD=yyy node src/presentation/cli/descargar.js
 ```
 
 ## Architecture
@@ -22,7 +22,7 @@ Two parallel tracks exist in this repo:
 
 **1. Automation backend (`src/`)** — Node.js/Playwright script that logs into the PSP portal (`https://srvpsp.policia.gov.co:8443`) and downloads two payroll PDFs per run.
 
-- `src/presentation/cli/descargar.js` — main entry point; does login + downloads nómina option `1` and `2` via `frm_rpt_nomina.aspx?v_p={1|2}`. Uses hardcoded fallback credentials (should only be used locally; CI uses `USERNAME`/`PASSWORD` env vars via GitHub secrets).
+- `src/presentation/cli/descargar.js` — main entry point; does login + downloads 5 PDFs via `frm_rpt_nomina.aspx?v_p={1|2}`. Requires `NOMINA_USERNAME` and `NOMINA_PASSWORD` env vars — fails fast if missing.
 - `src/shared/config/index.js` — single source of truth for `baseUrl`, `loginUrl`, selectors, timeout, headless flag.
 - `src/infrastructure/browser/PlaywrightBrowser.js` — thin wrapper around Playwright chromium.
 - `src/infrastructure/browser/PlaywrightSessionRepository.ts` — TypeScript domain-layer implementation (DDD skeleton, not used by the main script; `descargar.js` uses Playwright directly).

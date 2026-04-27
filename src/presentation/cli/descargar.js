@@ -6,9 +6,14 @@ const config = require('../../shared/config');
 const OUTPUT_PATH = './output';
 
 const CREDENTIALS = {
-  username: process.env.USERNAME || '***USUARIO***',
-  password: process.env.PASSWORD || '***CLAVE***',
+  username: process.env.NOMINA_USERNAME,
+  password: process.env.NOMINA_PASSWORD,
 };
+
+if (!CREDENTIALS.username || !CREDENTIALS.password) {
+  console.error('❌ Error: Se requieren las variables de entorno NOMINA_USERNAME y NOMINA_PASSWORD');
+  process.exit(1);
+}
 
 function extraerPeriodo(nombre) {
   const match = nombre.toLowerCase().match(/(\w+)\s+(\d{4})/);
