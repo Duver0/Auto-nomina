@@ -67,17 +67,43 @@ async function downloadNomina(page, option, filePrefix, textFilter, downloadPath
   await page.waitForTimeout(2000);
 
   console.log('🔄 Iniciando descarga...');
-  const downloadPromise = page.waitForEvent('download').catch(() => null);
+
+  // Portal serves PDFs in two ways:
+  //   1. attachment (Content-Disposition: attachment) → triggers download event
+  //   2. inline navigation (page navigates to PDF URL) → must intercept response body
+  // Portal serves PDFs two ways:
+  //   1. attachment → triggers download event
+  //   2. inline navigation → response body must be captured immediately before page discards it
+  const downloadPromise = page.waitForEvent('download', { timeout: 10000 })
+    .then(d => ({ type: 'download', value: d }))
+    .catch(() => null);
+
+  const pdfResponsePromise = page.waitForResponse(
+    r => r.status() === 200 && (r.headers()['content-type'] || '').includes('pdf'),
+    { timeout: 10000 }
+  ).then(async r => {
+    const body = await r.body(); // capture immediately before navigation discards resource
+    return { type: 'response', body };
+  }).catch(() => null);
 
   await page.click('#ctl00_ContentPlaceHolder1_btnConsultar');
-  await page.waitForTimeout(5000);
 
-  const download = await downloadPromise;
-  if (download) {
-    const filename = `${filePrefix}-${periodoCodigo}.pdf`;
-    const filepath = path.join(downloadPath, filename);
-    await download.saveAs(filepath);
-    console.log(`   ✅ Descargado: ${filename}`);
+  const result = await Promise.race([
+    downloadPromise,
+    pdfResponsePromise,
+    new Promise(resolve => setTimeout(() => resolve(null), 13000)),
+  ]);
+
+  const filename = `${filePrefix}-${periodoCodigo}.pdf`;
+  const filepath = path.join(downloadPath, filename);
+
+  if (result?.type === 'download') {
+    await result.value.saveAs(filepath);
+    console.log(`   ✅ Descargado (attachment): ${filename}`);
+    return filename;
+  } else if (result?.type === 'response') {
+    fs.writeFileSync(filepath, result.body);
+    console.log(`   ✅ Descargado (inline PDF): ${filename}`);
     return filename;
   } else {
     console.log('   ⚠️ No se detectó descarga');
@@ -115,9 +141,9 @@ async function main() {
   await downloadNomina(page, '1', 'prima1', filtroPrima, OUTPUT_PATH);
   await downloadNomina(page, '2', 'prima2', filtroPrima, OUTPUT_PATH);
 
-  // Retroactivo (solo pensión 1)
-  const filtroRetroactivo = /NOMINA DE RETROACTIVO DE PENSIONADOS-TEGEN/i;
-  await downloadNomina(page, '1', 'retroactivo', filtroRetroactivo, OUTPUT_PATH);
+  // Retroactivo (solo pensión 2 — no existe en v_p=1)
+  const filtroRetroactivo = /NOMINA\s+DE\s+RETROACTIVO\s+DE\s+PENSIONADOS-TEGEN/i;
+  await downloadNomina(page, '2', 'retroactivo', filtroRetroactivo, OUTPUT_PATH);
 
   console.log('\n✅ Proceso completado!');
   await browser.close();
