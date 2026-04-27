@@ -1,0 +1,247 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a5f2a 0%, #0d3d15 100%);
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.container {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 380px;
+  width: calc(100% - 32px);
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.icon svg {
+  width: 28px;
+  height: 28px;
+  fill: white;
+}
+
+h1 {
+  color: #1a5f2a;
+  font-size: 19px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+/* ── Password form ── */
+.password-form {
+  margin-bottom: 0;
+}
+
+.password-input {
+  width: 100%;
+  padding: 13px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.password-input:focus {
+  border-color: #4CAF50;
+}
+
+.password-input.error {
+  border-color: #f44336;
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 13px;
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+.error-msg {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 6px;
+  display: none;
+}
+
+.error-msg.show {
+  display: block;
+}
+
+/* ── Files (grouped) ── */
+.files {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.files.show {
+  display: flex;
+}
+
+/* Section group */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.group-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.group-btns .file-btn {
+  flex: 1;
+  min-width: calc(50% - 3px);
+}
+
+@media (max-width: 320px) {
+  .group-btns .file-btn {
+    min-width: 100%;
+  }
+}
+
+.group-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888;
+  text-align: left;
+  padding-left: 4px;
+}
+
+/* Separator between groups */
+.group-sep {
+  height: 1px;
+  background: #eee;
+  margin: 2px 0;
+}
+
+/* Download button */
+.file-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+  color: white;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.25);
+}
+
+.file-btn:active {
+  transform: scale(0.98);
+}
+
+.file-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: white;
+  flex-shrink: 0;
+}
+
+.file-btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.file-btn-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.file-btn-period {
+  display: none;
+}
+
+/* Retroactivo gets a slightly different tint to stand out */
+.file-btn.retroactivo {
+  background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+  box-shadow: 0 3px 10px rgba(25, 118, 210, 0.25);
+}
+
+/* ── Info bar ── */
+.info {
+  background: #E8F5E9;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #2E7D32;
+  line-height: 1.5;
+}
+
+.footer {
+  margin-top: 14px;
+  color: #bbb;
+  font-size: 11px;
+}
+
+@media (max-height: 620px) {
+  .container { padding: 16px; }
+  .icon { width: 44px; height: 44px; margin-bottom: 10px; }
+  .icon svg { width: 22px; height: 22px; }
+  h1 { font-size: 17px; }
+  .subtitle { font-size: 12px; margin-bottom: 12px; }
+  .files { gap: 1px; margin-bottom: 1px; }
+  .file-btn { padding: 1px 1px; }
+  .file-btn-title { font-size: 15px; }
+}

@@ -2,8 +2,11 @@ const CACHE_NAME = 'nomina-psp-v1';
 const urlsToCache = [
   '/Auto-nomina/',
   '/Auto-nomina/index.html',
-  '/Auto-nomina/downloads/nomina1-abril-2026.pdf',
-  '/Auto-nomina/downloads/nomina2-abril-2026.pdf'
+  '/Auto-nomina/css/styles.css',
+  '/Auto-nomina/sw.js',
+  '/Auto-nomina/docs/manifest.json',
+  '/Auto-nomina/docs/downloads/nomina1-abril-2026.pdf',
+  '/Auto-nomina/docs/downloads/nomina2-abril-2026.pdf'
 ];
 
 self.addEventListener('install', event => {

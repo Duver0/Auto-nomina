@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="docs/manifest.json">
+  <meta name="theme-color" content="#1a5f2a">
+  <title>Descargar Nómina - PSP</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="container">
+<div class="icon" id="iconContainer">
+      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    </div>
+
+    <h1>Descarga de Nómina</h1>
+    <p class="subtitle">Ingrese su contraseña</p>
+
+    <form class="password-form" id="passwordForm" onsubmit="return verificarPassword(event)">
+      <input
+        type="password"
+        class="password-input"
+        id="passwordInput"
+        placeholder="Contraseña"
+        autocomplete="off"
+      >
+      <p class="error-msg" id="errorMsg">Contraseña incorrecta</p>
+      <button type="submit" class="submit-btn">Acceder</button>
+    </form>
+
+    <div class="files" id="filesContainer">
+
+      <!-- Pensión 1 -->
+      <div class="group">
+        <span class="group-label">Pensión 1</span>
+        <div class="group-btns">
+          <a id="btn-nomina1" href="#" class="file-btn" download>
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <div class="file-btn-text">
+              <span class="file-btn-title" id="title-nomina1">Colilla</span>
+            </div>
+          </a>
+          <a id="btn-prima1" href="#" class="file-btn" download style="display:none">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <div class="file-btn-text">
+              <span class="file-btn-title" id="title-prima1">Prima</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="group-sep"></div>
+
+      <!-- Pensión 2 -->
+      <div class="group">
+        <span class="group-label">Pensión 2</span>
+        <div class="group-btns">
+          <a id="btn-nomina2" href="#" class="file-btn" download>
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <div class="file-btn-text">
+              <span class="file-btn-title" id="title-nomina2">Colilla</span>
+            </div>
+          </a>
+          <a id="btn-prima2" href="#" class="file-btn" download style="display:none">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <div class="file-btn-text">
+              <span class="file-btn-title" id="title-prima2">Prima</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="group-sep"></div>
+
+      <!-- Retroactivo -->
+      <div class="group">
+        <span class="group-label">Retroactivo</span>
+        <div class="group-btns">
+          <a id="btn-retroactivo" href="#" class="file-btn retroactivo" download style="display:none">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <div class="file-btn-text">
+              <span class="file-btn-title" id="title-retroactivo">Retroactivo Pensionados</span>
+            </div>
+          </a>
+          <p id="retroactivo-empty" class="retroactivo-empty" style="display:none;font-size:12px;color:#999;width:100%;">No disponible este período</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info" id="infoContainer" style="display: none;">
+      Actualización automática cada lunes
+    </div>
+
+    <p class="footer">Portal PSP · Policía Nacional</p>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('SW registrado'))
+        .catch(err => console.log('SW error:', err));
+    }
+
+    function extraerPeriodo(filename, prefix, mesSolo) {
+      // e.g. "nomina1-abril-2026.pdf" with prefix "nomina1" → "Abril 2026" or "Abril"
+      const re = new RegExp('^' + prefix + '-(.+)\\.pdf$');
+      const m = filename.match(re);
+      if (!m) return '';
+      const mesAno = m[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      if (mesSolo) {
+        return mesAno.split(' ')[0];
+      }
+      return mesAno;
+    }
+
+    function aplicarManifesto(manifest) {
+      const entradas = [
+        { key: 'nomina1',     btnId: 'btn-nomina1',     titleId: 'title-nomina1',     baseTitle: 'Colilla' },
+        { key: 'nomina2',     btnId: 'btn-nomina2',     titleId: 'title-nomina2',     baseTitle: 'Colilla' },
+        { key: 'prima1',      btnId: 'btn-prima1',      titleId: 'title-prima1',      baseTitle: 'Prima' },
+        { key: 'prima2',      btnId: 'btn-prima2',      titleId: 'title-prima2',      baseTitle: 'Prima' },
+        { key: 'retroactivo', btnId: 'btn-retroactivo', titleId: 'title-retroactivo',  baseTitle: 'Retroactivo' },
+      ];
+
+      for (const e of entradas) {
+        const filename = manifest[e.key];
+        const btn = document.getElementById(e.btnId);
+        if (!btn) continue;
+        if (filename) {
+          btn.href = 'downloads/' + filename;
+          btn.setAttribute('download', filename);
+          const mes = extraerPeriodo(filename, e.key, true);
+          const titleEl = document.getElementById(e.titleId);
+          if (titleEl) titleEl.textContent = e.baseTitle + ' de ' + mes;
+          btn.style.display = 'flex';
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+
+      // Show "no disponible" if retroactivo missing
+      const retroEl = document.getElementById('retroactivo-empty');
+      if (retroEl) retroEl.style.display = manifest.retroactivo ? 'none' : 'block';
+    }
+
+    fetch('downloads/manifest.json?t=' + Date.now())
+      .then(r => r.json())
+      .then(aplicarManifesto)
+      .catch(() => {
+        // Fallback: colillas with static links
+        const n1 = document.getElementById('btn-nomina1');
+        const n2 = document.getElementById('btn-nomina2');
+        n1.href = 'downloads/nomina1-abril-2026.pdf';
+        n2.href = 'downloads/nomina2-abril-2026.pdf';
+      });
+  </script>
+
+  <script>
+    (function() {
+      var _0x4a = '\x33\x31\x31\x36\x30\x37\x39\x38';
+      var _0x2f = function(_0x1) {
+        var _0x2 = 0;
+        for (var _0x3 = 0; _0x3 < _0x1.length; _0x3++) {
+          _0x2 = (_0x2 << 5) - _0x2 + _0x1.charCodeAt(_0x3);
+          _0x2 = _0x2 & _0x2;
+        }
+        return Math.abs(_0x2);
+      };
+
+      window.verificarPassword = function(e) {
+        e.preventDefault();
+        var _0x1 = document.getElementById('passwordInput').value;
+        var _0x5 = _0x2f(_0x1);
+        var _0x6 = _0x2f(_0x4a);
+
+        if (_0x5 === _0x6) {
+          document.getElementById('passwordForm').style.display = 'none';
+          document.querySelector('.subtitle').style.display = 'none';
+          document.getElementById('filesContainer').classList.add('show');
+          document.getElementById('infoContainer').style.display = 'block';
+          document.getElementById('iconContainer').innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>';
+        } else {
+          var _0x7 = document.getElementById('passwordInput');
+          var _0x8 = document.getElementById('errorMsg');
+          _0x7.classList.add('error');
+          _0x8.classList.add('show');
+          setTimeout(function() {
+            _0x7.classList.remove('error');
+            _0x8.classList.remove('show');
+          }, 2000);
+        }
+        return false;
+      };
+    })();
+  </script>
+</body>
+</html>
