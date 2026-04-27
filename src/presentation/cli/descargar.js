@@ -73,6 +73,15 @@ async function downloadNomina(page, option, filePrefix, textFilter, downloadPath
 
   console.log('🔄 Iniciando descarga...');
 
+  const consoleErrors = [];
+  const consoleWarnings = [];
+  const responses = [];
+  page.on('console', msg => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text());
+    if (msg.type() === 'warning') consoleWarnings.push(msg.text());
+  });
+  page.on('response', resp => responses.push({ url: resp.url(), ct: resp.headers()['content-type'] || '' }));
+
   // Portal serves PDFs in two ways:
   //   1. attachment (Content-Disposition: attachment) → triggers download event
   //   2. inline navigation (page navigates to PDF URL) → must intercept response body
@@ -112,6 +121,17 @@ async function downloadNomina(page, option, filePrefix, textFilter, downloadPath
     return filename;
   } else {
     console.log('   ⚠️ No se detectó descarga');
+    if (consoleErrors.length) {
+      console.log('   🔍 Errores en consola del navegador:');
+      consoleErrors.forEach(e => console.log(`      - ${e}`));
+    }
+    if (responses.length > 0) {
+      console.log('   🔍 Últimas respuestas HTTP (no triviales):');
+      responses
+        .filter(r => !r.url.match(/\.(css|js|png|jpg|jpeg|gif|woff|ico|svg)/))
+        .slice(-10)
+        .forEach(r => console.log(`      - ${r.url.substring(0, 100)} [${r.ct}]`));
+    }
     return null;
   }
 }
@@ -122,9 +142,21 @@ async function main() {
   }
 
   console.log('🔄 Iniciando navegador...');
-  const browser = await chromium.launch({ headless: config.headless });
+  const browser = await chromium.launch({
+    headless: config.headless,
+    args: config.browserArgs || [],
+  });
   const context = await browser.newContext({ acceptDownloads: true });
   const page = await context.newPage();
+
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      console.log(`   🌐 [BROWSER ERROR] ${msg.text()}`);
+    }
+  });
+  page.on('pageerror', err => {
+    console.log(`   🌐 [PAGE ERROR] ${err.message}`);
+  });
 
   console.log(`🔄 Navegando a ${config.baseUrl}${config.loginUrl}...`);
   await page.goto(config.baseUrl + config.loginUrl, { waitUntil: 'domcontentloaded' });

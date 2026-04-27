@@ -3,6 +3,11 @@ module.exports = {
   loginUrl: '/Login.aspx',
   timeout: 30000,
   headless: true,
+  browserArgs: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+  ],
   selectors: {
     username: '#txtUsuario',
     password: '#txtClave',
