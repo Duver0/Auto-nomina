@@ -11,19 +11,18 @@ const CREDENTIALS = {
 };
 
 function extraerPeriodo(nombre) {
-  const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
   const match = nombre.toLowerCase().match(/(\w+)\s+(\d{4})/);
   if (match) {
-    const mes = match[1];
-    const anio = match[2];
-    return `${mes}-${anio}`;
+    return `${match[1]}-${match[2]}`;
   }
   return 'desconocido';
 }
 
-async function downloadNomina(page, option, downloadPath) {
+// textFilter: regex to match desired dropdown item, or null to pick most recent (nth 1)
+async function downloadNomina(page, option, filePrefix, textFilter, downloadPath) {
+  const label = textFilter ? textFilter.toString() : `opción ${option}`;
   console.log(`\n${'='.repeat(50)}`);
-  console.log(`📥 DESCARGANDO OPCIÓN ${option}`);
+  console.log(`📥 DESCARGANDO: ${filePrefix.toUpperCase()} (v_p=${option})`);
   console.log('='.repeat(50));
 
   const url = `/frm_rpt_nomina.aspx?v_p=${option}`;
@@ -35,25 +34,47 @@ async function downloadNomina(page, option, downloadPath) {
   await page.locator('#ctl00_ContentPlaceHolder1_ddlNomina_chosen a.chosen-single').click();
   await page.waitForTimeout(2000);
 
-  console.log('🔽 Obteniendo nombre del período más reciente...');
-  const periodoNombre = await page.locator('#ctl00_ContentPlaceHolder1_ddlNomina_chosen .chosen-results li').nth(1).textContent();
-  const periodoCodigo = extraerPeriodo(periodoNombre);
-  console.log(`   ✓ Período: ${periodoNombre}`);
+  const items = page.locator('#ctl00_ContentPlaceHolder1_ddlNomina_chosen .chosen-results li');
+  const count = await items.count();
 
-  console.log('🔽 Seleccionando primera opción...');
-  await page.locator('#ctl00_ContentPlaceHolder1_ddlNomina_chosen .chosen-results li').nth(1).click();
+  let targetItem = null;
+  let periodoNombre = null;
+
+  if (textFilter) {
+    // Scan all items for first match (dropdown is ordered most-recent first)
+    for (let i = 0; i < count; i++) {
+      const text = await items.nth(i).textContent();
+      if (textFilter.test(text)) {
+        targetItem = items.nth(i);
+        periodoNombre = text.trim();
+        break;
+      }
+    }
+    if (!targetItem) {
+      console.log(`   ⚠️ No se encontró item que coincida con: ${label}`);
+      return null;
+    }
+  } else {
+    targetItem = items.nth(1);
+    periodoNombre = (await targetItem.textContent()).trim();
+  }
+
+  const periodoCodigo = extraerPeriodo(periodoNombre);
+  console.log(`   ✓ Período encontrado: ${periodoNombre}`);
+
+  console.log('🔽 Seleccionando opción...');
+  await targetItem.click();
   await page.waitForTimeout(2000);
 
   console.log('🔄 Iniciando descarga...');
   const downloadPromise = page.waitForEvent('download').catch(() => null);
-  
+
   await page.click('#ctl00_ContentPlaceHolder1_btnConsultar');
-  
   await page.waitForTimeout(5000);
-  
+
   const download = await downloadPromise;
   if (download) {
-    const filename = `nomina${option}-${periodoCodigo}.pdf`;
+    const filename = `${filePrefix}-${periodoCodigo}.pdf`;
     const filepath = path.join(downloadPath, filename);
     await download.saveAs(filepath);
     console.log(`   ✅ Descargado: ${filename}`);
@@ -71,9 +92,7 @@ async function main() {
 
   console.log('🔄 Iniciando navegador...');
   const browser = await chromium.launch({ headless: config.headless });
-  const context = await browser.newContext({
-    acceptDownloads: true,
-  });
+  const context = await browser.newContext({ acceptDownloads: true });
   const page = await context.newPage();
 
   console.log(`🔄 Navegando a ${config.baseUrl}${config.loginUrl}...`);
@@ -85,14 +104,22 @@ async function main() {
   await page.click('#btnIngresar');
   await page.waitForLoadState('domcontentloaded');
   await page.waitForTimeout(3000);
-
   console.log('🔐 Sesión iniciada correctamente');
 
-  await downloadNomina(page, '1', OUTPUT_PATH);
-  await downloadNomina(page, '2', OUTPUT_PATH);
+  // Colillas ordinarias
+  await downloadNomina(page, '1', 'nomina1', null, OUTPUT_PATH);
+  await downloadNomina(page, '2', 'nomina2', null, OUTPUT_PATH);
+
+  // Prima de servicio (ambas pensiones)
+  const filtroPrima = /PRIMA DE SERVICIO DE PENSIONADOS-TEGEN/i;
+  await downloadNomina(page, '1', 'prima1', filtroPrima, OUTPUT_PATH);
+  await downloadNomina(page, '2', 'prima2', filtroPrima, OUTPUT_PATH);
+
+  // Retroactivo (solo pensión 1)
+  const filtroRetroactivo = /NOMINA DE RETROACTIVO DE PENSIONADOS-TEGEN/i;
+  await downloadNomina(page, '1', 'retroactivo', filtroRetroactivo, OUTPUT_PATH);
 
   console.log('\n✅ Proceso completado!');
-  
   await browser.close();
 }
 

@@ -30,16 +30,35 @@ jobs:
           USERNAME: ${{ secrets.NOMINA_USERNAME }}
           PASSWORD: ${{ secrets.NOMINA_PASSWORD }}
 
-      - name: Copiar a downloads
+      - name: Copiar a downloads y generar manifest
         run: |
-          mkdir -p downloads
-          cp output/*.pdf downloads/
-          ls -la downloads/
+          mkdir -p docs/downloads
+          cp output/*.pdf docs/downloads/
+          ls -la docs/downloads/
+
+          # Generate manifest.json with latest file per type (most recent by mtime)
+          cd docs/downloads
+          node -e "
+            const fs = require('fs');
+            const files = fs.readdirSync('.');
+            const latest = (prefix) => files
+              .filter(f => f.startsWith(prefix + '-') && f.endsWith('.pdf'))
+              .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0] || null;
+            const manifest = {
+              nomina1:     latest('nomina1'),
+              nomina2:     latest('nomina2'),
+              prima1:      latest('prima1'),
+              prima2:      latest('prima2'),
+              retroactivo: latest('retroactivo'),
+            };
+            fs.writeFileSync('manifest.json', JSON.stringify(manifest, null, 2));
+            console.log(JSON.stringify(manifest, null, 2));
+          "
 
       - name: Commit files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add downloads/
+          git add docs/downloads/
           git diff --staged --quiet || git commit -m "weekly: actualizar nóminas $(date +'%Y-%m-%d')"
           git push

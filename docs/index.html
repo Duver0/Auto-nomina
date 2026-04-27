@@ -15,7 +15,6 @@
 
     html, body {
       height: 100%;
-      overflow: hidden;
     }
 
     body {
@@ -25,6 +24,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 16px 0;
     }
 
     .container {
@@ -38,41 +38,42 @@
     }
 
     .icon {
-      width: 60px;
-      height: 60px;
+      width: 56px;
+      height: 56px;
       background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
+      margin: 0 auto 14px;
     }
 
     .icon svg {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       fill: white;
     }
 
     h1 {
       color: #1a5f2a;
-      font-size: 20px;
-      margin-bottom: 6px;
+      font-size: 19px;
+      margin-bottom: 4px;
     }
 
     .subtitle {
       color: #666;
       font-size: 13px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
+    /* ── Password form ── */
     .password-form {
-      margin-bottom: 16px;
+      margin-bottom: 0;
     }
 
     .password-input {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
       font-size: 16px;
@@ -98,8 +99,8 @@
 
     .submit-btn {
       width: 100%;
-      margin-top: 12px;
-      padding: 14px;
+      margin-top: 10px;
+      padding: 13px;
       background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
       color: white;
       border: none;
@@ -107,7 +108,7 @@
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: transform 0.15s ease;
     }
 
     .submit-btn:active {
@@ -117,7 +118,7 @@
     .error-msg {
       color: #f44336;
       font-size: 12px;
-      margin-top: 8px;
+      margin-top: 6px;
       display: none;
     }
 
@@ -125,31 +126,54 @@
       display: block;
     }
 
+    /* ── Files (grouped) ── */
     .files {
       display: none;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .files.show {
       display: flex;
     }
 
+    /* Section group */
+    .group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .group-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      text-align: left;
+      padding-left: 4px;
+    }
+
+    /* Separator between groups */
+    .group-sep {
+      height: 1px;
+      background: #eee;
+      margin: 2px 0;
+    }
+
+    /* Download button */
     .file-btn {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 10px;
       background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
       color: white;
-      padding: 14px 20px;
-      border-radius: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
       text-decoration: none;
-      font-size: 15px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      transition: transform 0.15s ease;
+      box-shadow: 0 3px 10px rgba(76, 175, 80, 0.25);
     }
 
     .file-btn:active {
@@ -157,14 +181,41 @@
     }
 
     .file-btn svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       fill: white;
+      flex-shrink: 0;
     }
 
+    .file-btn-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1px;
+    }
+
+    .file-btn-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .file-btn-period {
+      font-size: 11px;
+      opacity: 0.85;
+      font-weight: 400;
+    }
+
+    /* Retroactivo gets a slightly different tint to stand out */
+    .file-btn.retroactivo {
+      background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+      box-shadow: 0 3px 10px rgba(25, 118, 210, 0.25);
+    }
+
+    /* ── Info bar ── */
     .info {
       background: #E8F5E9;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 8px;
       font-size: 12px;
       color: #2E7D32;
@@ -172,44 +223,20 @@
     }
 
     .footer {
-      margin-top: 16px;
-      color: #999;
+      margin-top: 14px;
+      color: #bbb;
       font-size: 11px;
     }
 
-    @media (max-height: 600px) {
-      .container {
-        padding: 16px;
-      }
-      .icon {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 10px;
-      }
-      .icon svg {
-        width: 24px;
-        height: 24px;
-      }
-      h1 {
-        font-size: 18px;
-        margin-bottom: 4px;
-      }
-      .subtitle {
-        font-size: 12px;
-        margin-bottom: 12px;
-      }
-      .files {
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      .file-btn {
-        padding: 12px 16px;
-        font-size: 14px;
-      }
-      .info {
-        padding: 10px;
-        font-size: 11px;
-      }
+    @media (max-height: 620px) {
+      .container { padding: 16px; }
+      .icon { width: 44px; height: 44px; margin-bottom: 10px; }
+      .icon svg { width: 22px; height: 22px; }
+      h1 { font-size: 17px; }
+      .subtitle { font-size: 12px; margin-bottom: 12px; }
+      .files { gap: 8px; margin-bottom: 10px; }
+      .file-btn { padding: 9px 12px; }
+      .file-btn-title { font-size: 13px; }
     }
   </style>
 </head>
@@ -225,10 +252,10 @@
     <p class="subtitle">Ingrese su contraseña</p>
 
     <form class="password-form" id="passwordForm" onsubmit="return verificarPassword(event)">
-      <input 
-        type="password" 
-        class="password-input" 
-        id="passwordInput" 
+      <input
+        type="password"
+        class="password-input"
+        id="passwordInput"
         placeholder="Contraseña"
         autocomplete="off"
       >
@@ -237,22 +264,69 @@
     </form>
 
     <div class="files" id="filesContainer">
-      <a href="downloads/nomina1-abril-2026.pdf" class="file-btn" download>
-        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Descargar Nómina 1
-      </a>
 
-      <a href="downloads/nomina2-abril-2026.pdf" class="file-btn" download>
-        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        Descargar Nómina 2
-      </a>
+      <!-- Pensión 1 -->
+      <div class="group">
+        <span class="group-label">Pensión 1</span>
+        <a id="btn-nomina1" href="#" class="file-btn" download>
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <div class="file-btn-text">
+            <span class="file-btn-title">Colilla de Pago</span>
+            <span class="file-btn-period" id="period-nomina1"></span>
+          </div>
+        </a>
+        <a id="btn-prima1" href="#" class="file-btn" download style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <div class="file-btn-text">
+            <span class="file-btn-title">Prima de Servicio</span>
+            <span class="file-btn-period" id="period-prima1"></span>
+          </div>
+        </a>
+      </div>
+
+      <div class="group-sep"></div>
+
+      <!-- Pensión 2 -->
+      <div class="group">
+        <span class="group-label">Pensión 2</span>
+        <a id="btn-nomina2" href="#" class="file-btn" download>
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <div class="file-btn-text">
+            <span class="file-btn-title">Colilla de Pago</span>
+            <span class="file-btn-period" id="period-nomina2"></span>
+          </div>
+        </a>
+        <a id="btn-prima2" href="#" class="file-btn" download style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <div class="file-btn-text">
+            <span class="file-btn-title">Prima de Servicio</span>
+            <span class="file-btn-period" id="period-prima2"></span>
+          </div>
+        </a>
+      </div>
+
+      <div class="group-sep"></div>
+
+      <!-- Retroactivo -->
+      <div class="group">
+        <span class="group-label">Retroactivo</span>
+        <a id="btn-retroactivo" href="#" class="file-btn retroactivo" download style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <div class="file-btn-text">
+            <span class="file-btn-title">Retroactivo Pensionados</span>
+            <span class="file-btn-period" id="period-retroactivo"></span>
+          </div>
+        </a>
+        <p id="retroactivo-empty" class="retroactivo-empty" style="display:none;font-size:12px;color:#999;text-align:left;padding-left:4px;">No disponible este período</p>
+      </div>
+
     </div>
 
     <div class="info" id="infoContainer" style="display: none;">
       Actualización automática cada lunes
     </div>
 
-    <p class="footer">Portal PSP - Policía Nacional</p>
+    <p class="footer">Portal PSP · Policía Nacional</p>
   </div>
 
   <script>
@@ -261,6 +335,54 @@
         .then(() => console.log('SW registrado'))
         .catch(err => console.log('SW error:', err));
     }
+
+    function extraerPeriodo(filename, prefix) {
+      // e.g. "nomina1-abril-2026.pdf" with prefix "nomina1" → "Abril 2026"
+      const re = new RegExp('^' + prefix + '-(.+)\\.pdf$');
+      const m = filename.match(re);
+      if (!m) return '';
+      return m[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function aplicarManifesto(manifest) {
+      const entradas = [
+        { key: 'nomina1',     btnId: 'btn-nomina1',     periodId: 'period-nomina1' },
+        { key: 'nomina2',     btnId: 'btn-nomina2',     periodId: 'period-nomina2' },
+        { key: 'prima1',      btnId: 'btn-prima1',      periodId: 'period-prima1' },
+        { key: 'prima2',      btnId: 'btn-prima2',      periodId: 'period-prima2' },
+        { key: 'retroactivo', btnId: 'btn-retroactivo', periodId: 'period-retroactivo' },
+      ];
+
+      for (const e of entradas) {
+        const filename = manifest[e.key];
+        const btn = document.getElementById(e.btnId);
+        if (!btn) continue;
+        if (filename) {
+          btn.href = 'downloads/' + filename;
+          btn.setAttribute('download', filename);
+          const period = extraerPeriodo(filename, e.key);
+          document.getElementById(e.periodId).textContent = period;
+          btn.style.display = 'flex';
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+
+      // Show "no disponible" if retroactivo missing
+      const retroEl = document.getElementById('retroactivo-empty');
+      if (retroEl) retroEl.style.display = manifest.retroactivo ? 'none' : 'block';
+    }
+
+    fetch('downloads/manifest.json?t=' + Date.now())
+      .then(r => r.json())
+      .then(aplicarManifesto)
+      .catch(() => {
+        // Fallback: colillas with static links
+        const n1 = document.getElementById('btn-nomina1');
+        const n2 = document.getElementById('btn-nomina2');
+        n1.href = 'downloads/nomina1-abril-2026.pdf';
+        n2.href = 'downloads/nomina2-abril-2026.pdf';
+      });
   </script>
 
   <script>
@@ -280,7 +402,7 @@
         var _0x1 = document.getElementById('passwordInput').value;
         var _0x5 = _0x2f(_0x1);
         var _0x6 = _0x2f(_0x4a);
-        
+
         if (_0x5 === _0x6) {
           document.getElementById('passwordForm').style.display = 'none';
           document.getElementById('filesContainer').classList.add('show');
