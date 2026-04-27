@@ -84,26 +84,29 @@ El workflow `.github/workflows/descargar-nomina.yml` ejecuta el script automáti
 
 `docs/` contiene una PWA estática protegida con contraseña que permite descargar los PDFs generados por el CI:
 
-- `docs/index.html` — página con password gate
+- `index.html` — página principal (en raíz)
+- `css/styles.css` — estilos (en raíz)
+- `sw.js` — service worker (en raíz)
 - `docs/downloads/` — PDFs generados por el workflow
-- `docs/sw.js` + `docs/manifest.json` — service worker para instalación PWA
+- `docs/manifest.json` — PWA manifest
 
 ## Estructura del proyecto
 
 ```
 Auto-nomina/
-├── src/
-│   ├── domain/             # Entidades y casos de uso (DDD skeleton)
-│   ├── infrastructure/     # Implementación Playwright
-│   ├── presentation/cli/   # CLI: descargar.js
-│   └── shared/config/     # Configuración centralizada
+├── index.html              # Página principal PWA
+├── css/styles.css         # Estilos
+├── sw.js                  # Service worker (PWA)
 ├── docs/
-│   ├── index.html          # PWA con password gate
-│   ├── downloads/          # PDFs del CI
-│   ├── sw.js               # Service worker
-│   └── manifest.json       # PWA manifest
-├── .github/workflows/      # GitHub Actions
-├── .env.example            # Plantilla de configuración
+│   ├── manifest.json      # PWA manifest
+│   └── downloads/         # PDFs del CI
+├── src/
+│   ├── domain/            # Entidades y casos de uso (DDD skeleton)
+│   ├── infrastructure/    # Implementación Playwright
+│   ├── presentation/cli/  # CLI: descargar.js
+│   └── shared/config/     # Configuración centralizada
+├── .github/workflows/     # GitHub Actions
+├── .env.example          # Plantilla de configuración
 └── package.json
 ```
 
