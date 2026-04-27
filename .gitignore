@@ -3,7 +3,6 @@ node_modules/
 
 # Output (downloaded PDFs)
 output/
-downloads/
 
 # Playwright
 .playwright/
