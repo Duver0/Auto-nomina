@@ -28,8 +28,8 @@ jobs:
       - name: Descargar nóminas
         run: node src/presentation/cli/descargar.js
         env:
-          USERNAME: ${{ secrets.NOMINA_USERNAME }}
-          PASSWORD: ${{ secrets.NOMINA_PASSWORD }}
+          NOMINA_USERNAME: ${{ secrets.NOMINA_USERNAME }}
+          NOMINA_PASSWORD: ${{ secrets.NOMINA_PASSWORD }}
 
       - name: Copiar a downloads y generar manifest
         run: |
