@@ -35,6 +35,10 @@ jobs:
           NOMINA_USERNAME: ${{ secrets.NOMINA_USERNAME }}
           NOMINA_PASSWORD: ${{ secrets.NOMINA_PASSWORD }}
 
+      - name: Inject HTML password
+        run: |
+          sed -i "s/PLACEHOLDER_PASSWORD/${{ secrets.NOMINA_HTML_PASSWORD }}/" js/config.js
+
       - name: Copiar a downloads y generar manifest
         run: |
           mkdir -p docs/downloads
