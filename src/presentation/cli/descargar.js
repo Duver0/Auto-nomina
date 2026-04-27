@@ -213,8 +213,10 @@ async function main() {
   await descargarWrapper('1', 'nomina1', null);
   await descargarWrapper('2', 'nomina2', null);
 
-  // Prima de servicio (ambas pensiones)
-  const filtroPrima = /PRIMA DE/i;
+  // Prima de servicio / navidad (ambas pensiones)
+  // Coincide con cualquier prima de pensionados: PRIMA DE NAVIDAD o PRIMA DE SERVICIO
+  // El dropdown ya viene ordenado por fecha, tomamos el primero
+  const filtroPrima = /PRIMA DE .*PENSIONADOS-TEGEN/i;
   await descargarWrapper('1', 'prima1', filtroPrima);
   await descargarWrapper('2', 'prima2', filtroPrima);
 
