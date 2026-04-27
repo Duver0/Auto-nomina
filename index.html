@@ -130,7 +130,7 @@
         const btn = document.getElementById(e.btnId);
         if (!btn) continue;
         if (filename) {
-          btn.href = 'downloads/' + filename;
+          btn.href = 'docs/downloads/' + filename;
           btn.setAttribute('download', filename);
           const mes = extraerPeriodo(filename, e.key, true);
           const titleEl = document.getElementById(e.titleId);
@@ -146,15 +146,17 @@
       if (retroEl) retroEl.style.display = manifest.retroactivo ? 'none' : 'block';
     }
 
-    fetch('downloads/manifest.json?t=' + Date.now())
+    fetch('docs/downloads/manifest.json?t=' + Date.now())
       .then(r => r.json())
       .then(aplicarManifesto)
       .catch(() => {
         // Fallback: colillas with static links
         const n1 = document.getElementById('btn-nomina1');
         const n2 = document.getElementById('btn-nomina2');
-        n1.href = 'downloads/nomina1-abril-2026.pdf';
-        n2.href = 'downloads/nomina2-abril-2026.pdf';
+        n1.href = 'docs/downloads/nomina1-abril-2026.pdf';
+        n2.href = 'docs/downloads/nomina2-abril-2026.pdf';
+        n1.style.display = 'flex';
+        n2.style.display = 'flex';
       });
   </script>
 
