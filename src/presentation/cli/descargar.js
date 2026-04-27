@@ -213,10 +213,24 @@ async function main() {
   await descargarWrapper('1', 'nomina1', null);
   await descargarWrapper('2', 'nomina2', null);
 
-  // Prima de servicio (ambas pensiones)
+  // Prima de servicio (buscar diciembre primero, luego la más reciente)
+  // El dropdown tiene ambas primas: junio y diciembre
   const filtroPrima = /PRIMA DE SERVICIO DE PENSIONADOS-TEGEN/i;
-  await descargarWrapper('1', 'prima1', filtroPrima);
-  await descargarWrapper('2', 'prima2', filtroPrima);
+  const filtroPrimaDiciembre = /PRIMA DE SERVICIO.*DICIEMBRE/i;
+  let prima1 = null;
+  let prima2 = null;
+
+  // Intentar descargar prima de diciembre primero
+  prima1 = await descargarWrapper('1', 'prima1', filtroPrimaDiciembre);
+  prima2 = await descargarWrapper('2', 'prima2', filtroPrimaDiciembre);
+
+  // Si no hay prima de diciembre, intentar la más reciente (cualquiera)
+  if (!prima1) {
+    await descargarWrapper('1', 'prima1', filtroPrima);
+  }
+  if (!prima2) {
+    await descargarWrapper('2', 'prima2', filtroPrima);
+  }
 
   // Retroactivo (solo pensión 2 — no existe en v_p=1)
   const filtroRetroactivo = /NOMINA\s+DE\s+RETROACTIVO\s+DE\s+PENSIONADOS-TEGEN/i;
