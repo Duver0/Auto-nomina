@@ -177,7 +177,7 @@ h1 {
   gap: 6px;
   background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
   color: white;
-  padding: 8px 10px;
+  padding: 12px 10px;
   border-radius: 8px;
   text-decoration: none;
   transition: transform 0.15s ease;
