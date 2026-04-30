@@ -3,11 +3,11 @@
   "name": "auto-nomina",
   "version": "1.0.0",
   "description": "Automatización de descarga de comprobantes de nómina",
-  "main": "src/presentation/cli/index.js",
+  "main": "src/presentation/cli/descargar.js",
   "scripts": {
-    "start": "node src/presentation/cli/index.js",
+    "start": "node src/presentation/cli/descargar.js",
     "test": "jest",
-    "login": "node src/presentation/cli/index.js login"
+    "login": "node src/presentation/cli/descargar.js login"
   },
   "keywords": [
     "automation",

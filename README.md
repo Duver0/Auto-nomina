@@ -58,6 +58,18 @@ NOMINA_USERNAME=xxx NOMINA_PASSWORD=yyy npm start
 export $(grep -v '^#' .env | xargs) && npm start
 ```
 
+### Servir PWA locally
+
+```bash
+# Con Python (Python 3)
+python3 -m http.server 8000
+
+# Con Node.js
+npx serve .
+
+# Luego abre http://localhost:8000
+```
+
 ### Comandos disponibles
 
 ```bash

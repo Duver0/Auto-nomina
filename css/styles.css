@@ -177,11 +177,16 @@ h1 {
   gap: 6px;
   background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
   color: white;
-  padding: 12px 10px;
+  padding: 14px 10px;
   border-radius: 8px;
   text-decoration: none;
   transition: transform 0.15s ease;
   box-shadow: 0 3px 10px rgba(76, 175, 80, 0.25);
+}
+
+.file-btn.prima-btn,
+.file-btn.colilla-btn {
+  padding: 18px 10px;
 }
 
 .file-btn:active {
@@ -189,28 +194,65 @@ h1 {
 }
 
 .file-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   fill: white;
   flex-shrink: 0;
+}
+
+.file-btn.prima-btn svg,
+.file-btn.colilla-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .file-btn-text {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1px;
+  gap: 0px;
+  flex: 1;
+}
+
+.colilla-btn .file-btn-text,
+.prima-btn .file-btn-text {
+  align-items: stretch;
+  gap: 0px;
+}
+
+.colilla-btn .file-btn-period,
+.prima-btn .file-btn-period {
+  margin-top: -1px;
 }
 
 .file-btn-title {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
 }
 
+.file-btn-label {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  opacity: 0.9;
+  text-align: left;
+}
+
 .file-btn-period {
   display: none;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+}
+
+.prima-btn .file-btn-period,
+.colilla-btn .file-btn-period {
+  display: block;
 }
 
 /* Retroactivo gets a slightly different tint to stand out */

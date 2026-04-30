@@ -37,16 +37,18 @@
       <div class="group">
         <span class="group-label">Pensión 1</span>
         <div class="group-btns">
-          <a id="btn-nomina1" href="#" class="file-btn" download>
+          <a id="btn-nomina1" href="#" class="file-btn colilla-btn" download>
             <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             <div class="file-btn-text">
-              <span class="file-btn-title" id="title-nomina1">Colilla</span>
+              <span class="file-btn-label">Colilla de:</span>
+              <span class="file-btn-period" id="period-nomina1">Abril</span>
             </div>
           </a>
-          <a id="btn-prima1" href="#" class="file-btn" download style="display:none">
+          <a id="btn-prima1" href="#" class="file-btn prima-btn" download style="display:none">
             <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             <div class="file-btn-text">
-              <span class="file-btn-title" id="title-prima1">Prima</span>
+              <span class="file-btn-label">Prima de:</span>
+              <span class="file-btn-period" id="period-prima1">Abril</span>
             </div>
           </a>
         </div>
@@ -58,16 +60,18 @@
       <div class="group">
         <span class="group-label">Pensión 2</span>
         <div class="group-btns">
-          <a id="btn-nomina2" href="#" class="file-btn" download>
+          <a id="btn-nomina2" href="#" class="file-btn colilla-btn" download>
             <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             <div class="file-btn-text">
-              <span class="file-btn-title" id="title-nomina2">Colilla</span>
+              <span class="file-btn-label">Colilla de:</span>
+              <span class="file-btn-period" id="period-nomina2">Abril</span>
             </div>
           </a>
-          <a id="btn-prima2" href="#" class="file-btn" download style="display:none">
+          <a id="btn-prima2" href="#" class="file-btn prima-btn" download style="display:none">
             <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             <div class="file-btn-text">
-              <span class="file-btn-title" id="title-prima2">Prima</span>
+              <span class="file-btn-label">Prima de:</span>
+              <span class="file-btn-period" id="period-prima2">Abril</span>
             </div>
           </a>
         </div>
@@ -134,8 +138,12 @@
           btn.href = 'docs/downloads/' + filename;
           btn.setAttribute('download', filename);
           const mes = extraerPeriodo(filename, e.key, true);
-          const titleEl = document.getElementById(e.titleId);
-          if (titleEl) titleEl.textContent = e.baseTitle + ' de ' + mes;
+
+          // Usar period para nomina, prima, retroactivo
+          const periodEl = document.getElementById('period-' + e.key);
+          if (periodEl) {
+            periodEl.textContent = mes;
+          }
           btn.style.display = 'flex';
         } else {
           btn.style.display = 'none';
