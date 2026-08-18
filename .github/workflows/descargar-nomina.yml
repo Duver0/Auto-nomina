@@ -45,21 +45,71 @@ jobs:
           cp output/*.pdf docs/downloads/ 2>/dev/null || true
           ls -la docs/downloads/
 
-          # Generate manifest.json with latest file per type (most recent by mtime)
+          # Generate manifest.json with latest file per type (current month)
+          # plus a "historial" of the 2 previous months for comparison
           cd docs/downloads
           node -e "
             const fs = require('fs');
-            const files = fs.readdirSync('.');
-            const latest = (prefix) => files
-              .filter(f => f.startsWith(prefix + '-') && f.endsWith('.pdf'))
-              .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0] || null;
-            const manifest = {
-              nomina1:     latest('nomina1'),
-              nomina2:     latest('nomina2'),
-              prima1:      latest('prima1'),
-              prima2:      latest('prima2'),
+            const files = fs.readdirSync('.').filter(f => f.endsWith('.pdf'));
+            const TYPES = ['nomina1','nomina2','prima1','prima2','retroactivo'];
+            const MONTHS = {enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,
+              agosto:7,septiembre:8,octubre:9,noviembre:10,diciembre:11};
+
+            const period = (f) => {
+              const m = f.match(/-(.+)-(\d{4})\.pdf$/);
+              if (!m) return null;
+              const mes = m[1].toLowerCase();
+              const anio = parseInt(m[2], 10);
+              if (MONTHS[mes] === undefined) return null;
+              const label = m[1].charAt(0).toUpperCase() + m[1].slice(1) + ' ' + anio;
+              return { key: m[1] + '-' + anio, label, sort: anio * 12 + MONTHS[mes] };
+            };
+
+            const byPeriod = {};
+            for (const f of files) {
+              const tipo = TYPES.find(t => f.startsWith(t + '-'));
+              if (!tipo) continue;
+              const p = period(f);
+              if (!p) continue;
+              if (!byPeriod[p.key]) byPeriod[p.key] = { mes: p.label, sort: p.sort };
+              byPeriod[p.key][tipo] = f;
+            }
+
+            const periods = Object.values(byPeriod).sort((a, b) => b.sort - a.sort);
+
+            // Latest file of each type (the current "main" view)
+            const latest = (tipo) => {
+              let best = null, bestSort = -1;
+              for (const p of periods) {
+                if (p[tipo] && p.sort > bestSort) { best = p[tipo]; bestSort = p.sort; }
+              }
+              return best;
+            };
+
+            const actualMonth = periods.find(p => p.nomina1 || p.nomina2) || { mes: '' };
+            const actual = {
+              mes: actualMonth.mes,
+              nomina1: latest('nomina1'),
+              nomina2: latest('nomina2'),
+              prima1: latest('prima1'),
+              prima2: latest('prima2'),
               retroactivo: latest('retroactivo'),
             };
+
+            // History: the 2 months before the latest nomina month
+            const historial = periods
+              .filter(p => (p.nomina1 || p.nomina2) && p.sort < actualMonth.sort)
+              .slice(0, 2)
+              .map(p => ({
+                mes: p.mes,
+                nomina1: p.nomina1 || null,
+                nomina2: p.nomina2 || null,
+                prima1: p.prima1 || null,
+                prima2: p.prima2 || null,
+                retroactivo: p.retroactivo || null,
+              }));
+
+            const manifest = { actual, historial };
             fs.writeFileSync('manifest.json', JSON.stringify(manifest, null, 2));
             console.log(JSON.stringify(manifest, null, 2));
           "

@@ -287,3 +287,93 @@ h1 {
   .file-btn { padding: 1px 1px; }
   .file-btn-title { font-size: 15px; }
 }
+
+/* ── History toggle (meses anteriores) ── */
+.history-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 4px 0 0;
+  padding: 12px;
+  background: #F1F8F2;
+  color: #2E7D32;
+  border: 2px solid #C8E6C9;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.history-toggle:active { transform: scale(0.98); }
+
+.history-toggle .history-chevron {
+  width: 22px;
+  height: 22px;
+  fill: #2E7D32;
+  transition: transform 0.25s ease;
+}
+
+.history-toggle.open .history-chevron { transform: rotate(180deg); }
+
+/* ── History container ── */
+.history {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 2px dashed #e0e0e0;
+}
+
+.history-month {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #FAFAFA;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px 10px;
+}
+
+.history-month-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a5f2a;
+  text-align: left;
+  padding-left: 4px;
+}
+
+/* History buttons use a light/secondary style so the current month stands out */
+.file-btn.history-btn {
+  background: white;
+  color: #2E7D32;
+  border: 2px solid #C8E6C9;
+  box-shadow: none;
+  padding: 12px 10px;
+}
+
+.file-btn.history-btn .file-btn-label {
+  opacity: 1;
+  font-size: 14px;
+}
+
+.file-btn.history-btn svg { fill: #2E7D32; }
+
+.file-btn.history-btn:active {
+  background: #F1F8F2;
+  transform: scale(0.98);
+}
+
+/* Retroactivo in history keeps its blue tone but lighter */
+.file-btn.history-btn.retroactivo {
+  background: white;
+  color: #0D47A1;
+  border: 2px solid #BBDEFB;
+}
+
+.file-btn.history-btn.retroactivo svg { fill: #0D47A1; }
+
+.file-btn.history-btn.retroactivo:active { background: #E3F2FD; }

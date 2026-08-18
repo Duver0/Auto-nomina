@@ -95,6 +95,13 @@
 
     </div>
 
+    <button type="button" class="history-toggle" id="historyToggle" style="display:none">
+      <span class="history-toggle-text">📂 Ver meses anteriores</span>
+      <svg class="history-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+    </button>
+
+    <div class="history" id="historyContainer" style="display:none"></div>
+
     <div class="info" id="infoContainer" style="display: none;">
       Actualización automática cada lunes
     </div>
@@ -109,50 +116,118 @@
         .catch(err => console.log('SW error:', err));
     }
 
-    function extraerPeriodo(filename, prefix, mesSolo) {
-      // e.g. "nomina1-abril-2026.pdf" with prefix "nomina1" → "Abril 2026" or "Abril"
+    function extraerMes(filename, prefix) {
+      // e.g. "nomina1-abril-2026.pdf" with prefix "nomina1" → "Abril"
       const re = new RegExp('^' + prefix + '-(.+)\\.pdf$');
       const m = filename.match(re);
       if (!m) return '';
-      const mesAno = m[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      if (mesSolo) {
-        return mesAno.split(' ')[0];
-      }
-      return mesAno;
+      return m[1].split('-')[0].replace(/\b\w/g, c => c.toUpperCase());
     }
 
-    function aplicarManifesto(manifest) {
-      const entradas = [
-        { key: 'nomina1',     btnId: 'btn-nomina1',     titleId: 'title-nomina1',     baseTitle: 'Colilla' },
-        { key: 'nomina2',     btnId: 'btn-nomina2',     titleId: 'title-nomina2',     baseTitle: 'Colilla' },
-        { key: 'prima1',      btnId: 'btn-prima1',      titleId: 'title-prima1',      baseTitle: 'Prima' },
-        { key: 'prima2',      btnId: 'btn-prima2',      titleId: 'title-prima2',      baseTitle: 'Prima' },
-        { key: 'retroactivo', btnId: 'btn-retroactivo', titleId: 'title-retroactivo',  baseTitle: 'Retroactivo' },
-      ];
+    const TIPOS = [
+      { key: 'nomina1',     btnId: 'btn-nomina1',     periodId: 'period-nomina1' },
+      { key: 'nomina2',     btnId: 'btn-nomina2',     periodId: 'period-nomina2' },
+      { key: 'prima1',      btnId: 'btn-prima1',      periodId: 'period-prima1' },
+      { key: 'prima2',      btnId: 'btn-prima2',      periodId: 'period-prima2' },
+      { key: 'retroactivo', btnId: 'btn-retroactivo', periodId: null },
+    ];
 
-      for (const e of entradas) {
-        const filename = manifest[e.key];
-        const btn = document.getElementById(e.btnId);
+    function aplicarMes(periodo) {
+      // periodo: { mes, nomina1, nomina2, prima1, prima2, retroactivo }
+      for (const t of TIPOS) {
+        const filename = periodo[t.key];
+        const btn = document.getElementById(t.btnId);
         if (!btn) continue;
         if (filename) {
           btn.href = 'docs/downloads/' + filename;
           btn.setAttribute('download', filename);
-          const mes = extraerPeriodo(filename, e.key, true);
-
-          // Usar period para nomina, prima, retroactivo
-          const periodEl = document.getElementById('period-' + e.key);
-          if (periodEl) {
-            periodEl.textContent = mes;
+          if (t.periodId) {
+            const p = document.getElementById(t.periodId);
+            if (p) p.textContent = extraerMes(filename, t.key);
           }
           btn.style.display = 'flex';
         } else {
           btn.style.display = 'none';
         }
       }
-
-      // Show "no disponible" if retroactivo missing
       const retroEl = document.getElementById('retroactivo-empty');
-      if (retroEl) retroEl.style.display = manifest.retroactivo ? 'none' : 'block';
+      if (retroEl) retroEl.style.display = periodo.retroactivo ? 'none' : 'block';
+    }
+
+    const ICONO = '<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>';
+
+    function crearBoton(tipo, filename, history) {
+      const a = document.createElement('a');
+      a.href = 'docs/downloads/' + filename;
+      a.setAttribute('download', filename);
+      a.className = 'file-btn history-btn ' + (tipo === 'retroactivo' ? 'retroactivo' : (tipo.includes('prima') ? 'prima-btn' : 'colilla-btn'));
+      a.innerHTML = ICONO +
+        '<div class="file-btn-text">' +
+          '<span class="file-btn-label">' + (tipo === 'retroactivo' ? 'Retroactivo' : (tipo.includes('prima') ? 'Prima' : 'Colilla')) + '</span>' +
+        '</div>';
+      return a;
+    }
+
+    function crearMesHistorial(periodo) {
+      const wrap = document.createElement('div');
+      wrap.className = 'history-month';
+
+      const head = document.createElement('div');
+      head.className = 'history-month-label';
+      head.textContent = periodo.mes;
+      wrap.appendChild(head);
+
+      const grupos = [
+        { label: 'Pensión 1', tipos: ['nomina1', 'prima1'] },
+        { label: 'Pensión 2', tipos: ['nomina2', 'prima2'] },
+        { label: 'Retroactivo', tipos: ['retroactivo'] },
+      ];
+
+      for (const g of grupos) {
+        const gWrap = document.createElement('div');
+        gWrap.className = 'group';
+        const gLabel = document.createElement('span');
+        gLabel.className = 'group-label';
+        gLabel.textContent = g.label;
+        gWrap.appendChild(gLabel);
+        const btns = document.createElement('div');
+        btns.className = 'group-btns';
+        let alguno = false;
+        for (const tipo of g.tipos) {
+          const f = periodo[tipo];
+          if (f) { btns.appendChild(crearBoton(tipo, f, true)); alguno = true; }
+        }
+        if (alguno) gWrap.appendChild(btns);
+        wrap.appendChild(gWrap);
+      }
+      return wrap;
+    }
+
+    function construirHistorial(historial) {
+      const toggle = document.getElementById('historyToggle');
+      const cont = document.getElementById('historyContainer');
+      if (!historial || !historial.length) {
+        window.__tieneHistorial = false;
+        return;
+      }
+      window.__tieneHistorial = true;
+      cont.innerHTML = '';
+      for (const periodo of historial) {
+        cont.appendChild(crearMesHistorial(periodo));
+      }
+
+      toggle.addEventListener('click', () => {
+        const abierto = cont.style.display === 'block';
+        cont.style.display = abierto ? 'none' : 'block';
+        toggle.classList.toggle('open', !abierto);
+        toggle.querySelector('.history-toggle-text').textContent =
+          abierto ? '📂 Ver meses anteriores' : '📂 Ocultar meses anteriores';
+      });
+    }
+
+    function aplicarManifesto(manifest) {
+      if (manifest.actual) aplicarMes(manifest.actual);
+      construirHistorial(manifest.historial);
     }
 
     fetch('docs/downloads/manifest.json?t=' + Date.now())
@@ -162,8 +237,8 @@
         // Fallback: colillas with static links
         const n1 = document.getElementById('btn-nomina1');
         const n2 = document.getElementById('btn-nomina2');
-        n1.href = 'docs/downloads/nomina1-abril-2026.pdf';
-        n2.href = 'docs/downloads/nomina2-abril-2026.pdf';
+        n1.href = 'docs/downloads/nomina1-agosto-2026.pdf';
+        n2.href = 'docs/downloads/nomina2-agosto-2026.pdf';
         n1.style.display = 'flex';
         n2.style.display = 'flex';
       });
@@ -193,6 +268,9 @@
           document.getElementById('filesContainer').classList.add('show');
           document.getElementById('infoContainer').style.display = 'block';
           document.getElementById('iconContainer').innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>';
+          if (window.__tieneHistorial) {
+            document.getElementById('historyToggle').style.display = 'flex';
+          }
         } else {
           var _0x7 = document.getElementById('passwordInput');
           var _0x8 = document.getElementById('errorMsg');
